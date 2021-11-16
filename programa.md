@@ -6,4 +6,5 @@
 2. Chequear datos entrenamiento: standarización
 3. Montar encoder-decoder	
 4. Matriz soporte vitis
-5. (Opcional) Montar red same resolution
+5. 3 papers stereo matching (Juan)
+6. (Opcional) Montar red same resolution
