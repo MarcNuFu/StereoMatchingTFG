@@ -10,3 +10,4 @@
 5. Matriz soporte vitis
 6. 3 papers stereo matching (Juan)
 7. (Opcional) Montar red same resolution
+8. Fix docker con gpu - https://github.com/NVIDIA/nvidia-docker/issues/1243 - docker: Error response from daemon: could not select device driver "" with capabilities: [[gpu]].
