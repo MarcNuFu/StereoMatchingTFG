@@ -6,7 +6,7 @@ from torch.autograd import Variable
 import dataloader.KITTIloader2015 as lt
 import dataloader.KITTILoader as DA
 
-def run_main():
+def main():
     batchsize = 1
     num_epochs = 3
     learnrate = 0.001
