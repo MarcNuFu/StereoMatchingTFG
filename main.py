@@ -8,12 +8,13 @@ def main():
 
     device = device_manager.select_device()
 
+    # 160 imagenes de la carpeta de training para cada loader
     TrainImgLoader, TestImgLoader = dataloader.get_dataloaders(args.path_dataset,
                                                                args.batchsize,
                                                                args.workers_train,
                                                                args.workers_test)
 
-    return
+    dataloader.show_images(TestImgLoader)
 
 
 if __name__ == '__main__':
