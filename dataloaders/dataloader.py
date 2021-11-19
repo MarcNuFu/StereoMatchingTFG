@@ -37,6 +37,7 @@ def get_dataloader_first_images(dataloader):
 def show_images(dataloader):
     imgL, imgR, disp_L = get_dataloader_first_images(dataloader)
     plt.figure()
+    print(imgL[0].size())
     plt.imshow(disp_L[0])
     plt.figure()
     plt.imshow(imgR[0].permute(1, 2, 0))
