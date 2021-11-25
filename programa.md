@@ -21,9 +21,29 @@
     4.1 Chequear VITIS: convertir el grafo (independiente o no de 1.) Obtener XModel
 5. Comenzar intro: descripción problema (stereo mattching -> disparity) basándose en refs.
 
+## Semana 25 - 26 Nov
 
+1. Learning rate 5e-5, sin weight decay
+2. Montar tensorboard logging training 
+    pip install tensorboard; tensorboard --logdir <folder de los logs>
+4. (Importante) MIrar metrica en MobileStereoNet (EPE, D1) e implementarla en script y en tensorboard
+5. (IMportante) Mir resnet comoi encoder
 
+```
+from torchvision import models
+model = models.resnet50(pretrained=True)
 
+def _build_backbone(net: nn.Module, depth: int) -> nn.Module:
+    new_backbone = nn.Sequential()
+    for child in net.named_children():
+        if child[0] == "features":
+            for j, grandchild in enumerate(child[1][:depth]):
+                new_backbone.add_module(str(j), grandchild)
+    return new_backbone
+    
+bvackbone = _build_backbone(model, 8)
+```
+UPSAMPLING: nn.Upsample(size)
 
 
 # Tutos
