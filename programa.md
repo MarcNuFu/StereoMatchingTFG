@@ -16,18 +16,22 @@
 
 1. Notebook visualización: visualizar output batch dataloader. Montar gráfico ejemplo input/output
 2. Entrenar disparity: (inputL, inputR) -> Disparity
-    2.1 img = torch.cat([imgL, imgR], dim=1) Cambiar canales input autoencoder a 6 y el putput a 1.
+    2.1 img = torch.cat([imgL, imgR], dim=1) Cambiar canales input autoencoder a 6 y el putput a 1. DONE
 4. Tuto: conversión TOrchScript JIT del pth https://pytorch.org/tutorials/beginner/Intro_to_TorchScript_tutorial.html
     4.1 Chequear VITIS: convertir el grafo (independiente o no de 1.) Obtener XModel
 5. Comenzar intro: descripción problema (stereo mattching -> disparity) basándose en refs.
 
-## Semana 25 - 26 Nov
+## Semana 25 Nov - 3 Dic
 
-1. Learning rate 5e-5, sin weight decay
-2. Montar tensorboard logging training 
+1. Learning rate 5e-5, sin weight decay DONE 
+2. Chequear pipeline datos inoput/output:
+    + con MobileStereoNet
+    + Interpolacion ground truth
+5. Montar tensorboard logging training 
     pip install tensorboard; tensorboard --logdir <folder de los logs>
 4. (Importante) MIrar metrica en MobileStereoNet (EPE, D1) e implementarla en script y en tensorboard
-5. (IMportante) Mir resnet comoi encoder
+5. (IMportante) Mir resnet comoi encoder DONE
+6. Probar de bajar resnet o baseline  a VITIS
 
 ```
 from torchvision import models
@@ -44,6 +48,9 @@ def _build_backbone(net: nn.Module, depth: int) -> nn.Module:
 bvackbone = _build_backbone(model, 8)
 ```
 UPSAMPLING: nn.Upsample(size)
+    
+    
+
 
 
 # Tutos
