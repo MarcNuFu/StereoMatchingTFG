@@ -3,7 +3,7 @@ import random
 import numpy as np
 from PIL import Image
 from torch.utils.data import Dataset
-from dataloaders2.data_io import get_transform, read_all_lines, pfm_imread
+from dataloaders.data_io import get_transform, read_all_lines, pfm_imread
 
 
 class KITTIDataset(Dataset):

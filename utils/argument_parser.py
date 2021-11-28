@@ -1,5 +1,6 @@
 import argparse
 from models import __models__
+from dataloaders import __datasets__
 
 DIVIDER = '-----------------------------------------'
 
@@ -8,7 +9,7 @@ def get_arguments():
     ap = argparse.ArgumentParser()
 
     ap.add_argument('--output_filename', type=str,   default='backbone',               help='Filename to save outputs. Default is backbone')
-    ap.add_argument('--path_dataset',    type=str,   default='./dataset/kitti2015v2/', help='Path to dataset. Default is KITTI2015')
+    ap.add_argument('--dataset',         type=str,   default='sceneflow',              help='Used dataset. Default is sceneflow', choices=__datasets__.keys())
     ap.add_argument('--batchsize',       type=int,   default=1,                        help='Training batchsize. Must be an integer. Default is 1')
     ap.add_argument('--epochs',          type=int,   default=3,                        help='Number of training epochs. Must be an integer. Default is 3')
     ap.add_argument('--workers_train',   type=int,   default=1,                        help='Number of workers in train DataLoader. Must be an integer. Default is 1')
@@ -26,7 +27,7 @@ def get_arguments():
 def print_arguments(args):
     print('\n' + DIVIDER)
     print('Command line options:')
-    print('--path_dataset       : ', args.path_dataset)
+    print('--dataset            : ', args.dataset)
     print('--batchsize          : ', args.batchsize)
     print('--learnrate          : ', args.learnrate)
     print('--epochs             : ', args.epochs)
