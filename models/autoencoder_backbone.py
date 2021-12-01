@@ -4,9 +4,8 @@ import torch.nn as nn
 
 class AutoencoderBackbone(nn.Module):
     def __init__(self):
-        super().__init__()        
-        # N(BATCHSIZE), 3, 256, 512
-        #[(W-K+2P)/S]+1
+        super(AutoencoderBackbone, self).__init__()        
+
         resnet_net = torchvision.models.resnet50(pretrained=True)
         resnet_net.conv1=nn.Conv2d(6, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
         delattr(resnet_net, "maxpool")

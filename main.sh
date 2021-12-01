@@ -1,10 +1,10 @@
 python main.py \
-       --output_filename 'backbone' \
+       --output_filename 'baseline' \
        --dataset 'kitti' \
-       --batchsize 8 \
-       --epochs 5 \
+       --batchsize 1 \
+       --epochs 10 \
        --workers_train 8 \
        --workers_test 4 \
        --epochs_printed 3 \
-       --learnrate 0.00001 \
-       --model AutoencoderBaseline
+       --learnrate 0.0001 \
+       --model AutoencoderBackbone

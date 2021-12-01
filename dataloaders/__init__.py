@@ -1,5 +1,8 @@
 import dataloaders.KITTIDataset as kitti
 import dataloaders.SceneFlowDataset as sceneflow
+from pathlib import Path
+
+path = str(Path(__file__).parent.absolute())
 
 __datasets__ = {
     "sceneflow": sceneflow.SceneFlowDataset,
@@ -7,13 +10,13 @@ __datasets__ = {
 }
 
 __datapath__ = {
-    "sceneflow": "./dataset/SceneFlow/",
-    "kitti": "./dataset/kitti2015v2/"
+    "sceneflow": path + "/dataset/SceneFlow/",
+    "kitti": path + "/dataset/kitti2015v2/"
 }
 
 __filenames__ = {
-    "sceneflow_train": "./filenames/sceneflow_train.txt",
-    "sceneflow_test": "./filenames/sceneflow_test.txt",
-    "kitti_train": "./filenames/kitti15_val.txt",
-    "kitti_test": "./filenames/kitti15_train.txt"
+    "sceneflow_train": path + "/filenames/sceneflow_train.txt",
+    "sceneflow_test": path + "/filenames/sceneflow_test.txt",
+    "kitti_train": path + "/filenames/kitti15_val.txt",
+    "kitti_test": path + "/filenames/kitti15_train.txt"
 }

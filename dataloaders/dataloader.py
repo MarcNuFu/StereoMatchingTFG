@@ -28,6 +28,6 @@ def get_test_dataloader(dataset, batchsize, workers_test):
     
     test_dataset = StereoDataset(path, filename, False)
     
-    TestImgLoader = DataLoader(test_dataset, batchsize, shuffle=False, num_workers=workers_test, drop_last=False)
+    TestImgLoader = DataLoader(test_dataset, batchsize, shuffle=True, num_workers=workers_test, drop_last=False)
     
     return TestImgLoader

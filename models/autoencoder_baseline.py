@@ -4,9 +4,8 @@ import torch.nn as nn
 
 class AutoencoderBaseline(nn.Module):
     def __init__(self):
-        super().__init__()        
-        # N(BATCHSIZE), 3, 256, 512
-        #[(W-K+2P)/S]+1
+        super(AutoencoderBaseline, self).__init__()        
+
         self.encoder = nn.Sequential(
             nn.Conv2d(6, 32, kernel_size=3, stride=2, padding=1),
             nn.BatchNorm2d(32),

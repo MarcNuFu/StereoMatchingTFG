@@ -1,5 +1,12 @@
 # StereoMatchingTFG
 
+Vitis
+./docker_run.sh xilinx/vitis-ai-cpu:latest
+conda activate vitis-ai-pytorch
+cd Vitis
+sh quantize.sh
+source compile.sh u50
+
 Dataset - KITTI2015
 https://s3.eu-central-1.amazonaws.com/avg-kitti/data_scene_flow.zip
 ```
