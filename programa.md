@@ -35,15 +35,15 @@
 
 ## Semana 1 Dic - 3 Dic
     
- 1. Entrenar Sceneflow con Backbone
- 2. Mirar exactamente qué hace exactamente MobileStereoNet a nivel de código
-      2.1 Interface cost volume
-      2.2 Disparity Regression
-      2.3 Tamaños?
-    2.4 MaxDisp
-    3.5 Mascara en input
-    2.6 Loss
-   
+1. Entrenar Sceneflow con Backbone
+2. Mirar exactamente qué hace exactamente MobileStereoNet a nivel de código
+    + Interface cost volume
+    + Disparity Regression
+    + Tamaños?
+    + MaxDisp
+    + Mascara en input
+    + Loss
+3. Crear archivo dde entorno con conda o pip para reproducción 
     
 # Tutos
 

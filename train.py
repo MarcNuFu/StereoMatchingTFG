@@ -1,5 +1,6 @@
 import dataloaders.dataloader as dataloader
 import utils.print_outputs as printer 
+from tqdm import tqdm
 from models import __models__
 
 import torch
@@ -24,7 +25,7 @@ def get_sample_images(sample, device):
     
 
 def train_epoch(model, device, TrainImgLoader, optimizer, criterion):
-    for batch_idx, sample in enumerate(TrainImgLoader):
+    for batch_idx, sample in tqdm(enumerate(TrainImgLoader), total=len(TrainImgLoader)):
         model.train()
         
         imgL, imgR, img, disp_gt, disp_true = get_sample_images(sample, device)

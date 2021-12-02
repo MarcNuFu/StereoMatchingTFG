@@ -10,7 +10,7 @@ def select_device():
         print('You have', torch.cuda.device_count(), 'CUDA devices available')
         for i in range(torch.cuda.device_count()):
             print('    Device', str(i), ': ', torch.cuda.get_device_name(i))
-        device = torch.device('cuda:1')
+        device = torch.device('cuda:' + str(i))
         print('Device ' + str(device) + ' selected')
     else:
         device = torch.device('cpu')

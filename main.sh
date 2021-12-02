@@ -1,4 +1,4 @@
-python main.py \
+CUDA_VISIBLE_DEVICES=0 python main.py \
        --output_filename 'baseline' \
        --dataset 'kitti' \
        --batchsize 1 \
