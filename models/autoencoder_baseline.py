@@ -32,7 +32,9 @@ class AutoencoderBaseline(nn.Module):
             nn.Sigmoid()
         )
 
-    def forward(self, img):
+    def forward(self, imgL, imgR):
+        img = torch.cat([imgL, imgR], dim=1)
         encoded = self.encoder(img)
         decoded = self.decoder(encoded)
-        return decoded
+        pred = torch.squeeze(decoded,1)
+        return pred

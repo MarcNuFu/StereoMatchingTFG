@@ -1,0 +1,12 @@
+CUDA_VISIBLE_DEVICES=0 python main.py \
+                       --dataset 'kitti' \
+                       --batchsize 8 \
+                       --epochs 300 \
+                       --workers_train 8 \
+                       --workers_test 4 \
+                       --learnrate 0.00001 \
+                       --model AutoencoderBackbone \
+                       --logdir 'outputs' \
+                       --pth_name 'backbone_kitti_model' \
+                       --maxdisp 192 \
+                       --load_model './Vitis/build/float_model/backbone_sf_model.pth'

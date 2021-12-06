@@ -1,0 +1,11 @@
+CUDA_VISIBLE_DEVICES=0 python main.py \
+                       --dataset 'sceneflow' \
+                       --batchsize 8 \
+                       --epochs 20 \
+                       --workers_train 8 \
+                       --workers_test 4 \
+                       --learnrate 0.00001 \
+                       --model AutoencoderBackbone \
+                       --logdir 'outputs' \
+                       --pth_name 'backbone_sf_model' \
+                       --maxdisp 192 

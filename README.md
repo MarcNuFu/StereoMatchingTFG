@@ -1,5 +1,7 @@
 # StereoMatchingTFG
 
+
+
 ## Entrenar red y generación pth
 Se genera model.pth en el directorio ./Vitis/build/float_model
 ```python
