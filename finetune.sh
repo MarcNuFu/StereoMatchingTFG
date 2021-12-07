@@ -6,7 +6,7 @@ CUDA_VISIBLE_DEVICES=0 python main.py \
                        --workers_test 4 \
                        --learnrate 0.00001 \
                        --model AutoencoderBackbone \
-                       --logdir 'outputs' \
+                       --logdir 'outputsFinetune' \
                        --pth_name 'backbone_kitti_model' \
                        --maxdisp 192 \
                        --load_model './Vitis/build/float_model/backbone_sf_model.pth'

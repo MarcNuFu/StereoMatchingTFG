@@ -16,7 +16,7 @@ def get_arguments():
     ap.add_argument('--workers_train',   type=int,   default=1,                        help='Number of workers in train DataLoader. Must be an integer. Default is 1')
     ap.add_argument('--workers_test',    type=int,   default=1,                        help='Number of workers in test DataLoader. Must be an integer. Default is 1')
     ap.add_argument('--maxdisp',         type=int,   default=192,                      help='Maximum disparity')
-    ap.add_argument('--learnrate',       type=float, default=0.001,                    help='Optimizer learning rate. Must be floating-point value. Default is 0.001')
+    ap.add_argument('--learnrate',       type=float, default=0.0001,                    help='Optimizer learning rate. Must be floating-point value. Default is 0.001')
     ap.add_argument('--model',                       default='AutoencoderBackbone',    help='Select a model structure', choices=__models__.keys())
     ap.add_argument('--logdir',                      default='stereo',                 help='The directory to save logs and checkpoints')
     ap.add_argument('--milestones',                  default=[10,15,100,150,200,250],  help='Epochs at which learning rate is divided by 2', metavar='N', nargs='*')  
