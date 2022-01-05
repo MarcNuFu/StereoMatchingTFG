@@ -20,7 +20,7 @@ def get_arguments():
     ap.add_argument('--learnrate',          type=float, default=0.0001,                   help='Optimizer learning rate. Must be floating-point value. Default is 0.001')
     ap.add_argument('--model',                          default='AutoencoderBackbone',    help='Select a model structure', choices=__models__.keys())
     ap.add_argument('--logdir',                         default='stereo',                 help='The directory to save logs and checkpoints')
-    ap.add_argument('--milestones',                     default=[200,220,240,260],            help='Epochs at which learning rate is divided by 2', metavar='N', nargs='*')  
+    ap.add_argument('--milestones',                     default=[200,220,240,260],        help='Epochs at which learning rate is divided by 2')  
     args = ap.parse_args()
 
     print_arguments(args)

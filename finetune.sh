@@ -1,7 +1,8 @@
-CUDA_VISIBLE_DEVICES=0 python main.py \
-                       --dataset 'KITTI' \
+CUDA_VISIBLE_DEVICES=0 python train.py \
+                       --dataset 'kitti' \
                        --batchsize 32 \
-                       --epochs 200 \
+                       --total_epochs 300 \
+                       --start_epoch 0 \
                        --workers_train 8 \
                        --workers_test 8 \
                        --learnrate 0.0001 \
