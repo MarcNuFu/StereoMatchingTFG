@@ -129,7 +129,11 @@ dmypy.json
 .pyre/
 
 #ignored folders
-outputs/
-outputsFinetune/
+tensorboard/finetune
+tensorboard/train
+!tensorboard/finetune/README.md
+!tensorboard/train/README.md
+
+
 Vitis/build/
 predictions/

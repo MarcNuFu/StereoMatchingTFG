@@ -1,12 +1,12 @@
 CUDA_VISIBLE_DEVICES=0 python main.py \
-                       --dataset 'kitti' \
-                       --batchsize 8 \
-                       --epochs 300 \
+                       --dataset 'KITTI' \
+                       --batchsize 32 \
+                       --epochs 200 \
                        --workers_train 8 \
-                       --workers_test 4 \
-                       --learnrate 0.00001 \
-                       --model AutoencoderBackbone \
-                       --logdir 'outputsFinetune' \
-                       --pth_name 'backbone_kitti_model' \
+                       --workers_test 8 \
+                       --learnrate 0.0001 \
+                       --model DispNet \
+                       --logdir 'tensorboard/finetune' \
+                       --pth_name 'DispNetKITTI.pth' \
                        --maxdisp 192 \
-                       --load_model './Vitis/build/float_model/backbone_sf_model.pth'
+                       --load_model './Vitis/build/float_model/DispNetSceneFlow.pth'

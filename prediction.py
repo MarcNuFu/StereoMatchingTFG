@@ -58,7 +58,7 @@ def test(args, device):
                                             
     TestImgLoader = dataloader.get_test_dataloader(args.dataset, args.batchsize, args.workers_test)  
                                        
-    model = __models__[args.model]
+    model = __models__[args.model](args.maxdisp)
     model = model.to(device)
    
     
@@ -73,7 +73,7 @@ def test(args, device):
           imgL, imgR, disp_gt = get_sample_images(sample, device)
           
           #Test          
-          recon = model(imgL, imgR)
+          recon = model(imgL, imgR)[-1]
           
           #Save output         
           disp_est_np = tensor2numpy(recon)      
@@ -81,7 +81,7 @@ def test(args, device):
           right_pad_np = tensor2numpy(sample["right_pad"])
           left_filenames = sample["left_filename"]           
           
-          for disp_est, top_pad, right_pad, fn, imgL2, imgR2 in zip(disp_est_np, top_pad_np, right_pad_np, left_filenames, imgL, imgR):
+          for disp_est, top_pad, right_pad, fn, imgL2, recon2 in zip(disp_est_np, top_pad_np, right_pad_np, left_filenames, imgL, recon):
 
             assert len(disp_est.shape) == 2
 
@@ -91,18 +91,21 @@ def test(args, device):
             fn = os.path.join("predictions/", '_'.join(name[2:])).replace(".png", "") + "/"
             os.mkdir(fn)
             
-            
             imgL_np = tensor2numpy(clip_img(imgL2.permute(1, 2, 0)))
             io.imsave(fn+"imgL.png", img_as_ubyte(imgL_np), check_contrast=False)
             
-            imgR_np = tensor2numpy(clip_img(imgR2.permute(1, 2, 0)))
-            io.imsave(fn+"imgR.png", img_as_ubyte(imgR_np), check_contrast=False)
+            if args.dataset == 'kitti':
+              disp_est1 = printer.kitti_colormap(disp_est)           
+              cv2.imwrite(fn+"colormap.png", disp_est1)
+              disp_est2 = np.round(disp_est * 256).astype(np.uint16)
+              io.imsave(fn+"prediction.png", disp_est2, check_contrast=False)
             
-            disp_est1 = printer.kitti_colormap(disp_est)           
-            cv2.imwrite(fn+"colormap.png", disp_est1)
+            else:
+              recon_np = tensor2numpy(recon2.unsqueeze(0).permute(1, 2, 0))
+              recon_np = np.round(recon_np * 256).astype(np.uint16)
+              io.imsave(fn+"recon.png", recon_np, check_contrast=False)
             
-            disp_est2 = np.round(disp_est * 256).astype(np.uint16)
-            io.imsave(fn+"prediction.png", disp_est2, check_contrast=False)
+            
 
 
     print('\nDone')

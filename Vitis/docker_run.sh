@@ -73,13 +73,13 @@ END
 
 ##############################
 
-if [[ $IMAGE_NAME == *"gpu"* ]]; then
+if [[ $IMAGE_NAME == *"cpu"* ]]; then
   docker run \
     $docker_devices \
-    --gpus all \
     $docker_run_params
 else
   docker run \
     $docker_devices \
+    --gpus all \
     $docker_run_params
 fi

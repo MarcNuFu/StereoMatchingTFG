@@ -73,9 +73,9 @@ class KITTIDataset(Dataset):
             left_img = processed(left_img).numpy()
             right_img = processed(right_img).numpy()
 
-            # pad to size 1248x384
+            # pad to size 1280x384
             top_pad = 384 - h
-            right_pad = 1248 - w
+            right_pad = 1280 - w
             assert top_pad > 0 and right_pad > 0
             # pad images
             left_img = np.lib.pad(left_img, ((0, 0), (top_pad, 0), (0, right_pad)), mode='constant', constant_values=0)

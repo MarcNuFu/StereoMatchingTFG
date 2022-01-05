@@ -50,9 +50,9 @@ LOG="/workspace/Vitis/build/logs"
 
 compile() {
   vai_c_xir \
-  --xmodel      ${BUILD}/quant_model/AutoencoderBaseline_int.xmodel \
+  --xmodel      ${BUILD}/quant_model/DispNet_int.xmodel \
   --arch        $ARCH \
-  --net_name    AutoencoderBaseline_${TARGET} \
+  --net_name    Dispnet_${TARGET} \
   --output_dir  ${BUILD}/compiled_model
 }
 

@@ -7,6 +7,43 @@ import cv2
 import os
 
 
+
+def make_iterative_func(func):
+    def wrapper(vars):
+        if isinstance(vars, list):
+            return [wrapper(x) for x in vars]
+        elif isinstance(vars, tuple):
+            return tuple([wrapper(x) for x in vars])
+        elif isinstance(vars, dict):
+            return {k: wrapper(v) for k, v in vars.items()}
+        else:
+            return func(vars)
+
+    return wrapper
+    
+    
+@make_iterative_func
+def tensor2float(vars):
+    if isinstance(vars, float):
+        return vars
+    elif isinstance(vars, torch.Tensor):
+        return vars.data.item()
+    else:
+        raise NotImplementedError("invalid input type for tensor2float")
+        
+        
+def save_metrics(logger, mode_tag, scalar_dict, global_step):
+    scalar_dict = tensor2float(scalar_dict)
+    for tag, values in scalar_dict.items():
+        if not isinstance(values, list) and not isinstance(values, tuple):
+            values = [values]
+        for idx, value in enumerate(values):
+            scalar_name = '{}/{}'.format(mode_tag, tag)
+            # if len(values) > 1:
+            scalar_name = scalar_name + "_" + str(idx)
+            logger.add_scalar(scalar_name, value, global_step)
+            
+            
 def print_info_epoch(logger, mode_tag, loss, imgL, imgR, recon, disp_gt, epoch):
     save_loss(logger, mode_tag, loss, epoch)
     save_images(logger, mode_tag, imgL, imgR, recon, disp_gt, epoch)
@@ -51,11 +88,18 @@ def save_image(logger, mode_tag, img_name, img, step):
     img = torch.from_numpy(img)[-1]
     logger.add_image(mode_tag + "/" + img_name, vutils.make_grid(img, padding=0, nrow=1, normalize=True, scale_each=True), step)
 
-                             
-def save_images(logger, mode_tag, imgL, imgR, recon, disp_gt, step):
+
+def save_images(logger, mode_tag, imgL, imgR, recon, disp_gt, step):   
+    recon = torch.squeeze(recon,1)
+    disp_gt = torch.squeeze(disp_gt,1)
+    
     save_image(logger, mode_tag, "imgL", imgL, step)
     save_image(logger, mode_tag, "imgR", imgR, step)
     save_image(logger, mode_tag, "disp_gt", disp_gt, step)
+
+    if isinstance(recon, list):
+      recon = recon[-1]
+      
     save_image(logger, mode_tag, "recon", recon, step)
     
     error_map = disp_error_image_func(recon, disp_gt)

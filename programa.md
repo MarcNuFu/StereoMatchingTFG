@@ -44,6 +44,14 @@
     + Mascara en input
     + Loss
 3. Crear archivo dde entorno con conda o pip para reproducción 
+   
+## Semana 9 -16 Dec
+    
+1. Probar FADNet en Alveo
+    + VITIS
+    + FINN
+2. Encontrar video de disparity
+3. 
     
 # Tutos
 

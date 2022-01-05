@@ -1,126 +1,123 @@
-import dataloaders.dataloader as dataloader
-import utils.tensorboard_printer as tensor_printer 
-from tqdm import tqdm
-from models import __models__
-from tensorboardX import SummaryWriter
+import gc
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import gc
-import torch.nn.functional as F
-import numpy as np
+from tqdm import tqdm
+from tensorboardX import SummaryWriter
+
+import dataloaders.dataloader as dataloader
+import utils.tensorboard_printer as tensor_printer
+import utils.device_manager as device_manager
+import utils.argument_parser as argument_parser
+from models import __models__
+from utils.train_utils import *
 
 
-def get_sample_images(sample, device):
-    imgL, imgR, disp_gt = sample['left'], sample['right'], sample['disparity'] 
-    imgL = imgL.to(device)
-    imgR = imgR.to(device)
-    disp_gt = disp_gt.to(device)
-    
-    return imgL, imgR, disp_gt
-    
+def process_sample(model, maxdisp, sample, device):
+    imgL, imgR, disp_gt = get_sample_images(sample, device)
 
-def train_epoch(model, device, TrainImgLoader, optimizer, logger, epoch_idx, criterion, maxdisp, batchsize):
+    mask = (disp_gt < maxdisp) & (disp_gt > 0)
+    mask.detach_()
+
+    recon, disps = model(imgL, imgR)
+
+    loss = calculate_loss(disps, disp_gt, mask)
+
+    del disps
+
+    return recon, loss, imgL, imgR, disp_gt, mask
+
+
+def train_epoch(model, device, TrainImgLoader, optimizer, logger, epoch_idx, maxdisp):
     model.train()
     total_train_loss = 0
-    
+
     for batch_idx, sample in tqdm(enumerate(TrainImgLoader), total=len(TrainImgLoader)):
-        #Prepare data
-        global_step = len(TrainImgLoader) * epoch_idx + batch_idx   
-        imgL, imgR, disp_gt = get_sample_images(sample, device)
-        mask = (disp_gt < maxdisp) & (disp_gt > 0)
-        mask.detach_()  
-             
-        #Train  
-        optimizer.zero_grad()             
-        recon = model(imgL,imgR)
-        loss = criterion(recon[mask], disp_gt[mask])
-        loss.backward()      
+        optimizer.zero_grad()
+
+        recon, loss, imgL, imgR, disp_gt, mask = process_sample(model, maxdisp, sample, device)
+
+        loss.backward()
         optimizer.step()
-        
-        #Print results
-        total_train_loss += loss
-        tensor_printer.save_loss(logger, 'train', loss, global_step)
-        if (batch_idx % 150) == 0: 
-          tensor_printer.save_images(logger, 'train', imgL, imgR, recon, disp_gt, batch_idx)
-    
-    
-    total_train_loss = total_train_loss/len(TrainImgLoader)    
-    return imgL, imgR, recon, disp_gt, total_train_loss
-    
-    
-def test_epoch(model, device, TestImgLoader, logger, epoch_idx, criterion, maxdisp, batchsize):
+
+        total_train_loss += loss.item()
+
+        if logger is not None:
+            save_outputs(loss.item(), batch_idx, epoch_idx, logger, imgL, imgR, recon, disp_gt, len(TrainImgLoader), mask, maxdisp, 'train')
+
+    total_train_loss = total_train_loss / len(TrainImgLoader)
+    if logger is not None:
+        tensor_printer.print_info_epoch(logger, 'trainEpoch', total_train_loss, imgL, imgR, recon, disp_gt, epoch_idx)
+
+    return total_train_loss
+
+
+def test_epoch(model, device, TestImgLoader, logger, epoch_idx, maxdisp):
     model.eval()
     total_test_loss = 0
-    
+
     with torch.no_grad():
-      for batch_idx, sample in tqdm(enumerate(TestImgLoader), total=len(TestImgLoader)):
-          #Prepare data
-          global_step = len(TestImgLoader) * epoch_idx + batch_idx        
-          imgL, imgR, disp_gt = get_sample_images(sample, device)
-          mask = (disp_gt < maxdisp) & (disp_gt > 0)
-          mask.detach_()
-          
-          #Test          
-          recon = model(imgL, imgR)                 
-          loss = criterion(recon[mask], disp_gt[mask]) 
-          
-          #Print results
-          total_test_loss += loss        
-          tensor_printer.save_loss(logger, 'test', loss, global_step)
-          if (batch_idx % 50) == 0: 
-            tensor_printer.save_images(logger, 'test', imgL, imgR, recon, disp_gt, batch_idx)
-      
-            
-      total_test_loss = total_test_loss/len(TestImgLoader)
-      return imgL, imgR, recon, disp_gt, sample, total_test_loss
+        for batch_idx, sample in tqdm(enumerate(TestImgLoader), total=len(TestImgLoader)):
+            recon, loss, imgL, imgR, disp_gt, mask = process_sample(model, maxdisp, sample, device)
+            total_test_loss += loss.item()
+
+            if logger is not None:
+                save_outputs(loss.item(), batch_idx, epoch_idx, logger, imgL, imgR, recon, disp_gt, len(TestImgLoader), mask, maxdisp, 'test')
+
+        total_test_loss = total_test_loss / len(TestImgLoader)
+        if logger is not None:
+            tensor_printer.print_info_epoch(logger, 'testEpoch', total_test_loss, imgL, imgR, recon, disp_gt, epoch_idx)
+
+        return total_test_loss
 
 
-def train(args, device):
+def train():
     print('Preparing training\n')
+    args = argument_parser.get_arguments()
+    device = device_manager.select_device()
     logger = SummaryWriter(args.logdir)
-                                            
+
     TrainImgLoader = dataloader.get_train_dataloader(args.dataset, args.batchsize, args.workers_train)
-    TestImgLoader = dataloader.get_test_dataloader(args.dataset, args.batchsize, args.workers_test)  
-                                       
+    TestImgLoader = dataloader.get_test_dataloader(args.dataset, args.batchsize, args.workers_test)
+
     model = __models__[args.model]
     model = model.to(device)
-    
-    criterion = nn.MSELoss()
+
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learnrate)
     scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=args.milestones, gamma=0.5)
-   
+
     if args.load_model != '':
-      print("Loading model {}".format(args.load_model))
-      model.load_state_dict(torch.load(args.load_model))
-    
-    print('\nStarting training\n')   
-    for epoch in range(args.epochs):
-        print(f'\nEpoch {epoch}')    
-    
-        #Train
-        imgL, imgR, recon, disp_gt, loss = train_epoch(model, device, TrainImgLoader, optimizer, logger, epoch, criterion, args.maxdisp, args.batchsize)
-        tensor_printer.print_info_epoch(logger, 'trainEpoch', loss, imgL, imgR, recon, disp_gt, epoch)
-        print(f'Train - Epoch:{epoch}, Loss:{loss.item():.4f}')
-        gc.collect()
+        print("Loading model {}".format(args.load_model))
+        model.load_state_dict(torch.load(args.load_model))
+
+    print('\nStarting training\n')
+    for epoch in range(args.start_epoch, args.total_epochs):
+        weights = set_weight_per_epoch(epoch, args.total_epochs)
+        print(f'\nEpoch {epoch} - Weights = ', weights)
         
-        #Test
-        imgL, imgR, recon, disp_gt, sample, loss = test_epoch(model, device, TestImgLoader, logger, epoch, criterion, args.maxdisp, args.batchsize)
-        tensor_printer.print_info_epoch(logger, 'testEpoch', loss, imgL, imgR, recon, disp_gt, epoch)
-        print(f'Test  - Epoch:{epoch}, Loss:{loss.item():.4f}')
+        # Train
+        loss_train = train_epoch(model, device, TrainImgLoader, optimizer, logger, epoch, args.maxdisp)
+        print(f'Train - Epoch:{epoch}, Loss:{loss_train:.4f}')
         gc.collect()
-        
-        #Scheduler step to decrease lr
+
+        # Test
+        loss_test = test_epoch(model, device, TestImgLoader, logger, epoch, args.maxdisp)
+        print(f'Test  - Epoch:{epoch}, Loss:{loss_test:.4f}')
+        gc.collect()
+
+        # Scheduler step to decrease lr
         scheduler.step()
-        
+
     logger.flush()
-    logger.close() 
+    logger.close()
     print('\nTraining ended')
-    
-    print('\nSaving model to ./Vitis/build/float_model/'+ args.pth_name + '.pth')
+
+    print('\nSaving model to ./Vitis/build/float_model/' + args.pth_name + '.pth')
+    print('\nSaving model for old Pytorch versions to ./Vitis/build/float_model/' + args.pth_name + '_old.pth')
     torch.save(model.state_dict(), './Vitis/build/float_model/' + args.pth_name + '.pth')
+    torch.save(model.state_dict(), './Vitis/build/float_model/' + args.pth_name + '_old.pth', _use_new_zipfile_serialization=False)
     print('\nModel saved')
-    
-    
+
+
 if __name__ == '__main__':
     train()
