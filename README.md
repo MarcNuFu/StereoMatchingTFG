@@ -109,7 +109,11 @@ If you are connecting via ssh the following option can be added to the ssh comma
 ssh ... -L (local port):127.0.0.1:(remote port) ...
 ```
 
+<<<<<<< HEAD
 ### Creación xmodel de la red para ejecutar con Alveo U50 (Vitis Ai)
+=======
+### CreaciÃ³n xmodel de la red para ejecutar con Alveo U50 (Vitis Ai)
+>>>>>>> 0c2cb66ea0d2022ff30064336d324de32adc6351
 Se genera el modelo cuantizado en el directorio ./Vitis/build/quant_model y se compila para poder ejecutar en Alveo U50
 ```python
 ./docker_run.sh xilinx/vitis-ai-cpu:latest
