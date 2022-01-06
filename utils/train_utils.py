@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 import utils.tensorboard_printer as tensor_printer 
 from utils.metrics import *
+
  
 weights = ()   
 
@@ -49,6 +50,7 @@ def set_weight_per_epoch(epoch, total_epochs):
     weights = (1, 0, 0, 0, 0, 0)     
   
   return weights
+  
   
 def get_sample_images(sample, device):
     imgL, imgR, disp_gt = sample['left'], sample['right'], sample['disparity'] 

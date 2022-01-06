@@ -1,6 +1,6 @@
-CUDA_VISIBLE_DEVICES=0 python prediction.py \
+CUDA_VISIBLE_DEVICES=8 python prediction.py \
                        --dataset 'kitti' \
-                       --batchsize 4 \
-                       --workers_test 4 \
-                       --model MSNet2D \
-                       --load_model './Vitis/build/float_model/model.pth'
+                       --batchsize 1 \
+                       --workers_test 1 \
+                       --model DispNet \
+                       --load_model './Vitis/build/float_model/DispNetKITTI.pth'

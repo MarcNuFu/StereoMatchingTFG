@@ -88,8 +88,11 @@ def train():
 
     if args.load_model != '':
         print("Loading model {}".format(args.load_model))
-        model.load_state_dict(torch.load(args.load_model))
-
+        if torch.cuda.is_available():
+          model.load_state_dict(torch.load(args.load_model))
+        else:
+          model.load_state_dict(torch.load(args.load_model, map_location=torch.device('cpu')))
+          
     print('\nStarting training\n')
     for epoch in range(args.start_epoch, args.total_epochs):
         weights = set_weight_per_epoch(epoch, args.total_epochs)

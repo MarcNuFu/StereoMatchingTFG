@@ -17,6 +17,7 @@ __datapath__ = {
 __filenames__ = {
     "sceneflow_train": path + "/filenames/sceneflow_train.txt",
     "sceneflow_test": path + "/filenames/sceneflow_test.txt",
-    "kitti_train": path + "/filenames/kitti15_val.txt",
-    "kitti_test": path + "/filenames/kitti15_train.txt"
+    "kitti_train": path + "/filenames/kitti15_train.txt",
+    "kitti_test": path + "/filenames/kitti15_val.txt",
+    "kitti_pred": path + "/filenames/kitti15_test.txt"
 }

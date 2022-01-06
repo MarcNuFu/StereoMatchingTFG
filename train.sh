@@ -7,6 +7,6 @@ CUDA_VISIBLE_DEVICES=0 python train.py \
                        --workers_test 8 \
                        --learnrate  0.0001 \
                        --model DispNet \
-                       --logdir 'tensorboard/finetune' \
-                       --pth_name 'DispNetSceneFlow' \
+                       --logdir 'tensorboard/train2' \
+                       --pth_name 'DispNetSceneFlow2' \
                        --maxdisp 192
