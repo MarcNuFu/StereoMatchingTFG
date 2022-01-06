@@ -17,6 +17,10 @@ Install conda and import virtual environment from stereo.yml with:
 ```
 conda env create -f stereo.yml
 ```
+Activate the virtual environment with:
+```
+conda activate stereo
+```
 
 Download the following datasets:
 - [KITTI Stereo 2015](http://www.cvlibs.net/datasets/kitti/eval_scene_flow.php?benchmark=stereo)
@@ -57,6 +61,7 @@ CUDA_VISIBLE_DEVICES=0 python train.py \
 Tensorboard will save the loss, metrics and outputs on [tensorboard/train](tensorboard/train).
 
 The pth will be saved on /Vitis/build/float_model/DispNetSceneFlow.pth.
+
 The old format pth will be saved on /Vitis/build/float_model/DispNetSceneFlow_old.pth.
 
 ### Finetune
@@ -84,6 +89,7 @@ CUDA_VISIBLE_DEVICES=0 python train.py \
 Tensorboard will save the loss, metrics and outputs on [tensorboard/finetune](tensorboard/finetune).
 
 The pth will be saved on /Vitis/build/float_model/DispNetKITTI.pth.
+
 The old format pth will be saved on /Vitis/build/float_model/DispNetKITTI_old.pth.
 
 ### Prediction
@@ -91,6 +97,17 @@ TO DO
 
 ### Pretrained Model
 TO DO
+
+### Tensorboard
+To check loss, metrics and outputs of execution use the following command in [tensorboard](tensorboard) directory:
+```
+tensorboard --logdir (train or finetune) --port (desired port)
+```
+
+If you are connecting via ssh the following option can be added to the ssh command to redirect the remote port to your local machine:
+```
+ssh ... -L (local port):127.0.0.1:(remote port) ...
+```
 
 ### Creación xmodel de la red para ejecutar con Alveo U50 (Vitis Ai)
 Se genera el modelo cuantizado en el directorio ./Vitis/build/quant_model y se compila para poder ejecutar en Alveo U50
