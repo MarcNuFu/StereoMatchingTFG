@@ -117,10 +117,12 @@ ssh ... -L (local port):127.0.0.1:(remote port) ...
 Se genera el modelo cuantizado en el directorio ./Vitis/build/quant_model y se compila para poder ejecutar en Alveo U50
 ```python
 ./docker_run.sh xilinx/vitis-ai-cpu:latest
+pip install scikit-image
 conda activate vitis-ai-pytorch
 cd Vitis
 sh quantize.sh
 source compile.sh u50
+sh target.sh
 ```
 ### Ejecutar en Alveo U50
 (TO DO)

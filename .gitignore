@@ -130,9 +130,14 @@ dmypy.json
 
 #ignored folders
 tensorboard/finetune/*
+tensorboard/finetuneV2/*
 tensorboard/train/*
+tensorboard/trainV2/*
+tensorboard/trainV22/*
 !tensorboard/finetune/README.md
+!tensorboard/finetuneV2/README.md
 !tensorboard/train/README.md
+!tensorboard/trainV2/README.md
 predictions/*
 !predictions/README.md
 

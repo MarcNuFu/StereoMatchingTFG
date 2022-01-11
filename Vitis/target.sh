@@ -1,0 +1,1 @@
+python -u target.py --target u50 -d '/workspace/Vitis/build' 2>&1 | tee '/workspace/Vitis/build/logs'/target_u50.log

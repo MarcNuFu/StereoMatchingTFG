@@ -25,29 +25,50 @@ def calculate_loss(disps, target, mask):
   return total_loss
   
   
-def set_weight_per_epoch(epoch, total_epochs):
+def set_weight_per_epoch(epoch, total_epochs, model, dataset):
   global weights
   
-  if epoch == 0:
-    weights = (0, 0, 0, 0, 0.2, 1)
-    
-  elif epoch >= 0.1*total_epochs and epoch < 0.15*total_epochs:
-    weights = (0, 0, 0, 0.2, 1, 0.4)  
-    
-  elif epoch >= 0.15*total_epochs and epoch < 0.2*total_epochs:
-    weights = (0, 0, 0.2, 1, 0.4, 0)  
-    
-  elif epoch >= 0.2*total_epochs and epoch < 0.25*total_epochs:
-    weights = (0, 0.2, 1, 0.4, 0, 0)  
-    
-  elif epoch >= 0.25*total_epochs and epoch < 0.3*total_epochs:
-    weights = (0.2, 1, 0.4, 0, 0, 0)  
-    
-  elif epoch >= 0.3*total_epochs and epoch < 0.4*total_epochs:
-    weights = (1, 0.4, 0, 0, 0, 0)  
-     
-  elif epoch >= 0.4*total_epochs:
-    weights = (1, 0, 0, 0, 0, 0)     
+  if model == "DispNet":
+    if epoch == 0:
+      weights = (0, 0, 0, 0, 0.2, 1)
+      
+    elif epoch >= 0.1*total_epochs and epoch < 0.15*total_epochs:
+      weights = (0, 0, 0, 0.2, 1, 0.4)  
+      
+    elif epoch >= 0.15*total_epochs and epoch < 0.2*total_epochs:
+      weights = (0, 0, 0.2, 1, 0.4, 0)  
+      
+    elif epoch >= 0.2*total_epochs and epoch < 0.25*total_epochs:
+      weights = (0, 0.2, 1, 0.4, 0, 0)  
+      
+    elif epoch >= 0.25*total_epochs and epoch < 0.3*total_epochs:
+      weights = (0.2, 1, 0.4, 0, 0, 0)  
+      
+    elif epoch >= 0.3*total_epochs and epoch < 0.4*total_epochs:
+      weights = (1, 0.4, 0, 0, 0, 0)  
+       
+    elif epoch >= 0.4*total_epochs:
+      weights = (1, 0, 0, 0, 0, 0) 
+       
+          
+  elif model == "DispNetV2":
+    if dataset == "sceneflow":
+      milestones = [20, 40, 60]
+    else:
+      milestones = [600, 1200, 1800]
+      
+    if epoch == 0:
+      weights = (0.32, 0.16, 0.08, 0.04, 0.02, 0.01, 0.005)
+        
+    elif epoch == milestones[0]:
+      weights = (0.6, 0.32, 0.08, 0.04, 0.02, 0.01, 0.005)  
+        
+    elif epoch == milestones[1]:
+      weights = (0.8, 0.16, 0.04, 0.02, 0.01, 0.005, 0.0025)  
+        
+    elif epoch == milestones[2]:
+      weights = (1.0, 0., 0., 0., 0., 0., 0.)  
+        
   
   return weights
   

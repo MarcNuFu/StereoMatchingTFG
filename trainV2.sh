@@ -1,0 +1,13 @@
+CUDA_VISIBLE_DEVICES=0 python train.py \
+                       --dataset 'sceneflow' \
+                       --batchsize 32 \
+                       --total_epochs 90 \
+                       --start_epoch 0 \
+                       --workers_train 8 \
+                       --workers_test 8 \
+                       --learnrate  1e-4 \
+                       --model DispNetV2 \
+                       --logdir 'tensorboard/trainV22' \
+                       --pth_name 'DispNetV2SceneFlow2' \
+                       --checkloss 1.5 \
+                       --maxdisp 192

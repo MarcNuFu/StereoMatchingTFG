@@ -75,7 +75,11 @@ def test(args, device):
     with torch.no_grad():
       for batch_idx, sample in tqdm(enumerate(PredImgLoader), total=len(PredImgLoader)):
           imgL, imgR, disp_gt = get_sample_images(sample, device)   
-          recon, _ = model(imgL, imgR)
+          
+          if args.model == "DispNetV2":
+            recon = model(imgL, imgR) 
+          else:
+            recon, _ = model(imgL, imgR)
                    
           recon = torch.squeeze(recon,1)
           disp_gt = torch.squeeze(disp_gt,1)

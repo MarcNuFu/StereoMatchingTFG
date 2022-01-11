@@ -30,28 +30,22 @@ def get_sample_images(sample, device):
     return imgL, imgR, disp_gt
     
       
-def test_model(model, device, TestImgLoader, maxdisp):
+def test_model(model, device, TestImgLoader, maxdisp, selected_model):
     model.eval()
     
     with torch.no_grad():
-      for batch_idx, sample in tqdm(enumerate(TestImgLoader), total=len(TestImgLoader)):
-          #Prepare data      
+      for batch_idx, sample in tqdm(enumerate(TestImgLoader), total=len(TestImgLoader)):     
           imgL, imgR, disp_gt = get_sample_images(sample, device)
           
           mask = (disp_gt < maxdisp)
           mask.detach_()
-          
-          #Test         
-          recon, disps = model(imgL, imgR)
                  
+          if selected_model == "DispNetV2":
+            recon = model(imgL, imgR) 
+          else:
+            recon, _ = model(imgL, imgR)
           
-          #PSMNET
-          
-          loss = lossEPE(recon, disp_gt, mask)
-          
-          #loss = model_loss(recon, disp_gt, mask)  
-          
-          break  
+          loss = lossEPE(recon, disp_gt, mask)  
           
           
 def lossEPE(output, target, mask):
@@ -102,7 +96,7 @@ def quantize(build_dir, quant_mode, batchsize, selected_model, workers_test, dat
   
   # evaluate 
   print("Forwarding with converted model")
-  test_model(quantized_model, device, TestImgLoader, maxdisp)
+  test_model(quantized_model, device, TestImgLoader, maxdisp, args.model)
 
   # export config
   if quant_mode == 'calib':
