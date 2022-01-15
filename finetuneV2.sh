@@ -11,4 +11,4 @@ CUDA_VISIBLE_DEVICES=0 python train.py \
                        --pth_name 'DispNetV2KITTI' \
                        --checkloss 0.6 \
                        --maxdisp 192 \
-                       --load_model './Vitis/build/float_model/DispNetV2SceneFlow.pth'
+                       --load_model './Vitis/build/float_model/DispNetV2SceneFlow_best.pth'

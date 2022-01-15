@@ -128,5 +128,21 @@ sh target.sh
 (TO DO)
 
 ## Results
-TO FO
+40 images
+
+Rendimiento
+RTX 2080 Ti -> Batchsize 7         -> 1.8891s  - 21.17 fps
+RTX 3090 ->    Batchsize 10        -> 1.9077s  - 20.97 fps
+Alveo U50 ->   Batchsize 3(forced) -> 4.3024s  - 9.3 fps 
+CPU -> 	       Batchsize 10        -> 19.7868s - 2.02 fps
+
+Precision
+DispNet Mejorada
+Versión Pytorch = 3.539% pixeles erroneos de media
+Versión Vitis = 39.096% pixeles erroneos de media
+
+DispNet
+Versión Pytorch = 6.3305% pixeles erroneos de media
+
+
 

@@ -25,21 +25,10 @@ import sys
 import argparse
 
 _divider = '-------------------------------'
-
-
+       
+        
 def preprocess_fn(image_path, fix_scale):
-    '''
-    Image pre-processing.
-    Opens image as grayscale, adds channel dimension, normalizes to range 0:1
-    and then scales by input quantization scaling factor
-    input arg: path of image file
-    return: numpy array
-    '''
-    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    image = image.reshape(28,28,1)
-    image = image * (1/255.0) * fix_scale
-    image = image.astype(np.int8)
-    return image
+    return cv2.imread(image_path)
 
 
 def get_child_subgraph_dpu(graph: "Graph") -> List["Subgraph"]:
@@ -57,16 +46,13 @@ def get_child_subgraph_dpu(graph: "Graph") -> List["Subgraph"]:
     ]
 
 
-def runDPU(id,start,dpu,imgL,imgR):
+def runDPU(id,start,dpu,imgL, imgR):
     '''get tensor'''
     inputTensors = dpu.get_input_tensors()
     outputTensors = dpu.get_output_tensors()
     input_ndim = tuple(inputTensors[0].dims)
     output_ndim = tuple(outputTensors[0].dims)
 
-    # we can avoid output scaling if use argmax instead of softmax
-    #output_fixpos = outputTensors[0].get_attr("fix_point")
-    #output_scale = 1 / (2**output_fixpos)
 
     batchSize = input_ndim[0]
     n_of_images = len(imgL)
@@ -85,13 +71,17 @@ def runDPU(id,start,dpu,imgL,imgR):
 
         '''prepare batch input/output '''
         inputData = []
-        inputData = [np.empty(input_ndim, dtype=np.int8, order="C")]
+        inputData = [np.empty(input_ndim, dtype=np.int8, order="C"), np.empty(input_ndim, dtype=np.int8, order="C")]
 
         '''init input image to input buffer '''
         for j in range(runSize):
-            imageRun = inputData[0]
-            imageRun[j, ...] = img[(count + j) % n_of_images].reshape(input_ndim[1:])
+            imageRunL = inputData[0]
+            imageRunL[j, ...] = imgL[(count + j) % n_of_images].reshape(input_ndim[1:])
+            imageRunR = inputData[1]
+            imageRunR[j, ...] = imgR[(count + j) % n_of_images].reshape(input_ndim[1:])
+
         '''run with batch '''
+
         job_id = dpu.execute_async(inputData,outputData[len(ids)])
         ids.append((job_id,runSize,start+count))
         count = count + runSize 
@@ -103,10 +93,10 @@ def runDPU(id,start,dpu,imgL,imgR):
             write_index = ids[index][2]
             '''store output vectors '''
             for j in range(ids[index][1]):
-                # we can avoid output scaling if use argmax instead of softmax
-                # out_q[write_index] = np.argmax(outputData[0][j] * output_scale)
-                out_q[write_index] = np.argmax(outputData[index][0][j])
+                out_q[write_index] = outputData[index][0][j]
                 write_index += 1
+                
+                
         ids=[]
 
 
@@ -115,13 +105,14 @@ def app(image_dir,threads,model):
     listimageL=os.listdir(image_dir+"/imgL")
     listimageR=os.listdir(image_dir+"/imgR")
     runTotal = len(listimageL)
-
+    
     global out_q
     out_q = [None] * runTotal
 
     g = xir.Graph.deserialize(model)
     subgraphs = get_child_subgraph_dpu(g)
     all_dpu_runners = []
+
     for i in range(threads):
         all_dpu_runners.append(vart.Runner.create_runner(subgraphs[0], "run"))
 
@@ -137,9 +128,9 @@ def app(image_dir,threads,model):
     for i in range(runTotal):
         pathL = os.path.join(image_dir+"/imgL",listimageL[i])
         imgL.append(preprocess_fn(pathL, input_scale))
-        
         pathR = os.path.join(image_dir+"/imgR",listimageR[i])
-        imgR.append(preprocess_fn(pathR, input_scale)
+        imgR.append(preprocess_fn(pathR, input_scale))
+
 
     '''run threads '''
     print (_divider)
@@ -153,7 +144,6 @@ def app(image_dir,threads,model):
             end = start+(len(imgL)//threads)
         in_qL = imgL[start:end]
         in_qR = imgR[start:end]
-        
         t1 = threading.Thread(target=runDPU, args=(i,start,all_dpu_runners[i], in_qL, in_qR))
         threadAll.append(t1)
         start=end
@@ -173,11 +163,13 @@ def app(image_dir,threads,model):
 
     ''' post-processing '''
     for i in range(len(out_q)):
-        prediction = out_q[i]
-        #Print
+        prediction = np.round(out_q[i] * 256).astype(np.uint16)
+        #io.imsave(fn+"prediction.png", disp_est2, check_contrast=False)
+        cv2.imwrite("outputs/"+str(i)+"L.png", imgL[i][9:, :-38])
+        cv2.imwrite("outputs/"+str(i)+".png", prediction[9:, :-38])
 
 
-    print('Finished')
+
     print (_divider)
     return
 
@@ -190,7 +182,7 @@ def main():
   ap = argparse.ArgumentParser()  
   ap.add_argument('-d', '--image_dir', type=str, default='images', help='Path to folder of images. Default is images')  
   ap.add_argument('-t', '--threads',   type=int, default=1,        help='Number of threads. Default is 1')
-  ap.add_argument('-m', '--model',     type=str, default='CNN_zcu102.xmodel', help='Path of xmodel. Default is CNN_zcu102.xmodel')
+  ap.add_argument('-m', '--model',     type=str, default='Dispnet_u50.xmodel', help='Path of xmodel. Default is CNN_zcu102.xmodel')
   args = ap.parse_args()  
   
   print ('Command line options:')
@@ -202,3 +194,4 @@ def main():
 
 if __name__ == '__main__':
   main()
+

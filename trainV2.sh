@@ -7,7 +7,7 @@ CUDA_VISIBLE_DEVICES=0 python train.py \
                        --workers_test 8 \
                        --learnrate  1e-4 \
                        --model DispNetV2 \
-                       --logdir 'tensorboard/trainV22' \
-                       --pth_name 'DispNetV2SceneFlow2' \
+                       --logdir 'tensorboard/trainV2' \
+                       --pth_name 'DispNetV2SceneFlow' \
                        --checkloss 1.5 \
                        --maxdisp 192

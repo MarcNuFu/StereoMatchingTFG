@@ -1,6 +1,5 @@
 import torch
 import torchvision.utils as vutils
-import utils.color_map as color
 from skimage import io
 import numpy as np        
 import cv2
@@ -51,32 +50,7 @@ def print_info_epoch(logger, mode_tag, loss, imgL, imgR, recon, disp_gt, epoch):
 
 def save_loss(logger, mode_tag, loss, step):
     logger.add_scalar(mode_tag, loss, step) 
-                               
-
-def save_color_map(logger, mode_tag, recon, sample, step):
-    #recon = recon[-1]
-
-   
-    if isinstance(recon, torch.Tensor):
-      recon_np = recon[-1].data.cpu().numpy()
-      
-    if isinstance(sample["top_pad"], torch.Tensor):
-      top_np = sample["top_pad"][-1].data.cpu().numpy()  
-      
-    if isinstance(sample["right_pad"], torch.Tensor):
-      right_np = sample["right_pad"][-1].data.cpu().numpy()  
-      
-    left_filename = sample["left_filename"][-1]
-  
-    recon_np = np.array(recon_np[top_np:, :-right_np], dtype=np.float32) 
-    color_map = color.kitti_colormap(recon_np)  
-    cv2.imwrite('/home/marcnf/StereoMatchingTFG/outputs/test'+ str(step)+'_color.png', color_map)
-
-    rounded = (recon_np * 256).astype(np.uint16)
-    io.imsave('/home/marcnf/StereoMatchingTFG/outputs/test' + str(step)+'_round.png', rounded)
-      
-    #logger.add_image(mode_tag + "/" + color_map, vutils.make_grid(img, padding=0, nrow=1, normalize=True, scale_each=True), step)
-      
+                                    
                              
 def save_image(logger, mode_tag, img_name, img, step):
     if isinstance(img, torch.Tensor):
