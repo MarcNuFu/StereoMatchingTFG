@@ -110,9 +110,9 @@ ssh ... -L (local port):127.0.0.1:(remote port) ...
 ```
 
 <<<<<<< HEAD
-### Creaci髇 xmodel de la red para ejecutar con Alveo U50 (Vitis Ai)
-=======
 ### Creaci贸n xmodel de la red para ejecutar con Alveo U50 (Vitis Ai)
+=======
+### Creaci脙鲁n xmodel de la red para ejecutar con Alveo U50 (Vitis Ai)
 >>>>>>> 0c2cb66ea0d2022ff30064336d324de32adc6351
 Se genera el modelo cuantizado en el directorio ./Vitis/build/quant_model y se compila para poder ejecutar en Alveo U50
 ```python
@@ -138,11 +138,11 @@ CPU -> 	       Batchsize 10        -> 19.7868s - 2.02 fps
 
 Precision
 DispNet Mejorada
-Versi髇 Pytorch = 3.539% pixeles erroneos de media
-Versi髇 Vitis = 39.096% pixeles erroneos de media
+Versi贸n Pytorch = 3.539% pixeles erroneos de media
+Versi贸n Vitis = 39.096% pixeles erroneos de media
 
 DispNet
-Versi髇 Pytorch = 6.3305% pixeles erroneos de media
+Versi贸n Pytorch = 6.3305% pixeles erroneos de media
 
 
-
+This repo bring from StereoNet and PSMNet.
